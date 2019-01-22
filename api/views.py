@@ -21,8 +21,8 @@ new_user = User()
 @record.route('/api/v2/interventions', methods=['POST'])
 def create_record():
     data = request.get_json()
-    new_record.add_record(data)
-    return jsonify({"message": " Successfully created"}), 201
+    created_record =  new_record.add_record(data)
+    return jsonify({"message": " Successfully created", "intervention": created_record, "status" : 201}), 201
 
 
 @record.route('/api/v2/interventions', methods=['GET'])
@@ -41,14 +41,14 @@ def fetch_single_record(record_id):
     return jsonify({"message":"record doesnot exist"}), 404
 
 
-@record.route('/api/v2/records/<int:record_id>', methods=['PUT'])
+@record.route('/api/v2/interventions/<int:record_id>', methods=['PUT'])
 def edit_record(record_id):
     # This method updates a record
     data = request.get_json()
     new_record.update_record(data['record_type'],
                              data['title'], data['description'], 
                              data['location'], data['status'], 
-                             data['images'], data['videos'],record_id)
+                             data['images'], data['videos'],record_id, data['comments'])
     return jsonify({"status": 200,
                      "data": "successfully edited"}), 200
 
@@ -72,7 +72,7 @@ def register_user():
     username = data['username']
     text_fields = ['othernames', 'firstname', 'lastname', 'username']
     user_fields = ['othernames', 'firstname', 'lastname']
-    key_fields = ['email', 'password']
+    key_fields = ['email', 'password', 'isAdmin']
     for name in user_fields:
         if not re.match(name_regex, data[name]):
             return jsonify({'message': 'Enter correct ' + name + ' format'}), 400
@@ -121,7 +121,7 @@ def delete_user(user_id):
     return jsonify({"message": "account successfully deleted"}), 200
 
 
-# @user.route('/api/v1/users/login', methods=['POST'])
+# @user.route('/api/v2/auth/login', methods=['POST'])
 # def login():
 # # this function enables user to log in  
 #     data = request.get_json()
