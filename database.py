@@ -1,19 +1,26 @@
 import psycopg2
+import os
 
 
 class DatabaseConnection:
     def __init__(self):
-        self.conn = psycopg2.connect(dbname="ireporter_db", password="123",
-                                     host="localhost", port="5432",
-                                     user="phiona")
+        if os.environ.get('APP_SETTINGS') == 'testing':
+            self.conn = psycopg2.connect(dbname="ireporter_testdb",
+                                         password="123",
+                                         host="localhost", port="5432",
+                                         user="phiona")
+        else:
+            self.conn = psycopg2.connect(dbname="ireporter_db", password="123",
+                                         host="localhost", port="5432",
+                                         user="phiona")
 
         self.cur = self.conn.cursor()
         self.conn.autocommit = True
     
-    def create_record_table(self):
-        sql = """ CREATE TABLE IF NOT EXISTS records(record_id SERIAL PRIMARY KEY NOT NULL,
+    def create_incident_table(self):
+        sql = """ CREATE TABLE IF NOT EXISTS incidents(incident_id SERIAL PRIMARY KEY NOT NULL,
                   createdOn DATE NOT NULL, created_by VARCHAR(25)
-                  NOT NULL, record_type VARCHAR(100) NOT NULL, title VARCHAR(250)
+                  NOT NULL, incident_type VARCHAR(100) NOT NULL, title VARCHAR(250)
                   NOT NULL, description VARCHAR(250) NOT NULL,
                   location VARCHAR(100) NOT NULL, status VARCHAR(10) NOT NULL,
                   images VARCHAR(255) NOT NULL, videos VARCHAR(255) NOT NULL, comments VARCHAR(250));"""
@@ -27,17 +34,21 @@ class DatabaseConnection:
                   username VARCHAR(10) NOT NULL,
                   registered_on DATE NOT NULL );"""
         self.cur.execute(sql)
-
    
-    def edit_record(self,  attribute, value, records):
-        query = f"""UPDATE records SET {attribute} ='{value}' WHERE records = '{records}' """
-        self.cur.exceute(query)
+    def edit_incident(self,  attribute, value, records):
+        query = f"""UPDATE incidents SET {attribute} ='{value}' WHERE incidents = '{incidents}' """
+        self.cur.execute(query)
         return'update successfully'
+
+    def drop_tables(self, table_name):
+        """ Drops the tables that exist in the database"""
+        sql = """ DROP TABLE {} CASCADE; """
+        self.cur.execute(sql.format(table_name))
 
     def close_DB(self):
         self.conn.close()
 
 
 dbconn = DatabaseConnection()
-dbconn.create_record_table()
+dbconn.create_incident_table()
 dbconn.close_DB()
