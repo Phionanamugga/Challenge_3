@@ -16,7 +16,7 @@ class Test_user_views(unittest.TestCase):
                         "email": "email@gmail.com",
                         "phonenumber": "123-456-7890",
                         "username": "username",
-                        "password": "12345678"
+                        "password": "12345678"          
                         }
         response = self.client.post('api/v1/users',
                                     json=user_details)
@@ -50,6 +50,7 @@ class Test_user_views(unittest.TestCase):
                             "phonenumber": "123-456-7890",
                             "username": "username",
                             "password": "134546m4mmfr"
+                       
                             }
         self.client.post('api/v1/users',
                          json=user_details)
@@ -68,7 +69,8 @@ class Test_user_views(unittest.TestCase):
                         "phonenumber": "123-456-7890",
                         "username": "username",
                         "password": "1234567hff"
-            }
+                        }
+                        
         response = self.client.post('api/v1/users',
                                     content_type='application/json',
                                     json=user_details)

@@ -1,7 +1,7 @@
 from flask import jsonify, request, abort, Blueprint
-from .models import Record, User
+from .models import Incident, User
 from datetime import datetime
-from api.models import Record
+from api.models import Incident
 import json
 import re
 from database import DatabaseConnection
@@ -14,7 +14,7 @@ password_regex = r"(?=.*[0-9])"
 username_regex = r"[a-zA-Z0-9_]"
 phone_regex = r"\d{3}-\d{3}-\d{4}"
 record = Blueprint('record', __name__)
-new_record = Record()
+new_record = Incident()
 new_user = User()
 
 
@@ -48,7 +48,7 @@ def edit_record(record_id):
     new_record.update_record(data['record_type'],
                              data['title'], data['description'], 
                              data['location'], data['status'], 
-                             data['images'], data['videos'],record_id, data['comments'])
+                             data['images'], data['videos'], data['comments'], record_id)
     return jsonify({"status": 200,
                      "data": "successfully edited"}), 200
 
@@ -72,7 +72,7 @@ def register_user():
     username = data['username']
     text_fields = ['othernames', 'firstname', 'lastname', 'username']
     user_fields = ['othernames', 'firstname', 'lastname']
-    key_fields = ['email', 'password', 'isAdmin']
+    key_fields = ['email', 'password']
     for name in user_fields:
         if not re.match(name_regex, data[name]):
             return jsonify({'message': 'Enter correct ' + name + ' format'}), 400
@@ -121,18 +121,16 @@ def delete_user(user_id):
     return jsonify({"message": "account successfully deleted"}), 200
 
 
-# @user.route('/api/v2/auth/login', methods=['POST'])
-# def login():
-# # this function enables user to log in  
-#     data = request.get_json()
-#     if not request.get_json:
-#         return jsonify({"msg": "JSON is missing in request"}), 400
-#         login_details = data.get('email', 'password')
-#         password = data.get('password')
-#     email = data.get('email')
-#     for user in users:
-#         if user.email == email:
-#             return jsonify({'message': user.get_user_details()}), 200
-#         if user.password == password:
-#             return jsonify({'message': user.get_user_details()}), 200
-#     return jsonify({'message': 'user not found in list'}), 404
+@user.route('/api/v2/auth/login', methods=['POST'])
+def login():
+# this function enables user to log in  
+    data = request.get_json()
+    login_fields = ['email', 'password']
+    for field in login_fields:
+        if field not in data.keys():
+            return jsonify({"message": "Enter email and password"}),400
+    if len(data.keys())> 2:
+        return jsonify({"message": "Only email and password required"}), 400
+    if new_user.check_if_user_exists(data['email']) and new_user.check_password_match(data['password']):
+        return "hello"
+    return jsonify({"message":"user doesnot exist, please register"}), 404

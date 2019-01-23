@@ -40,5 +40,4 @@ class DatabaseConnection:
 
 dbconn = DatabaseConnection()
 dbconn.create_record_table()
-dbconn.create_user_table()
 dbconn.close_DB()

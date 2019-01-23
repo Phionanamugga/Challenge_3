@@ -6,7 +6,7 @@ from flask import jsonify
 db = DatabaseConnection().cur
 
 
-class Record:
+class Incident:
     # this class defines the record created by a user
 
     def __init__(self):
@@ -20,6 +20,7 @@ class Record:
         self.images = ""
         self.videos = ""
         self.comments = ""
+
 
     def add_record(self, data):
         createdon = datetime.utcnow()
@@ -58,7 +59,7 @@ class Record:
                 "comments": row[10]
             })
 
-            return records
+        return records
 
     def delete_record(self, record_id):
         # This function deletes a record from the database
@@ -92,11 +93,10 @@ class Record:
                       description, location, status, 
                       images, videos,comments, record_id):
         # Modifies a record
-        sql = """UPDATE records SET record_type='{}',\
-                 title='{}', description ='{}', location='{}',\
-                 status='{}', images='{}', videos='{}', comments'{}' WHERE record_id = '{}'"""
-        db.execute(sql.format(record_type, title, description, location,
-                         status, images, videos,  comments, record_id))
+        sql = f"""UPDATE records SET record_type='{record_type}',\
+                 title='{title}', description ='{description}', location='{location}',\
+                 status='{status}', images='{images}', videos='{videos}', comments='{comments}' WHERE record_id='{record_id}';"""
+        db.execute(sql)
 
 
 
@@ -112,7 +112,8 @@ class User:
         self.phonenumber = ""
         self.username = ""
         self. registered_on = ""
-        self.is_admin = ""
+        dbconn = DatabaseConnection()
+        dbconn.create_user_table()
 
     def insert_user(self, data):
         registered_on = datetime.utcnow()
@@ -120,10 +121,10 @@ class User:
         query = """
         INSERT INTO users(firstname, lastname, othernames, email,
                           password, phonenumber, username, registered_on)\
-        VALUES('{}', '{}', '{}', '{}', '{}','{}','{}','{}', '{}');
+        VALUES('{}', '{}', '{}', '{}', '{}','{}','{}','{}');
         """.format(data['firstname'], data['lastname'],
                    data['othernames'], data['email'], data['password'],
-                   data['phonenumber'], data['username'], registered_on, data['is_admin'])
+                   data['phonenumber'], data['username'], registered_on)
 
         db.execute(query)
     
@@ -137,12 +138,12 @@ class User:
     
     def fetch_users(self):
         # Fetches all users from the database
-        users = []
+        user_rows = []
         sql = """SELECT * FROM users;"""
         db.execute(sql)
-        user_rows = db.fetchall()
-        for row in user_rows:
-            users.append({
+        rows = db.fetchall()
+        for row in rows:
+            user_rows.append({
                 "user_id": row[0],
                 "firstname": row[1],
                 "lastname": row[2],
@@ -151,10 +152,10 @@ class User:
                 "password": row[5],
                 "phonenumber": row[6],
                 "username": row[7],
-                "registered_on": row[8],
-                "is_admin" : row[9]
+                "registered_on": row[8]
+                
             })
-            return users
+        return user_rows
 
     def fetch_one_user(self, user_id):
         # returns a single user from the database
@@ -171,10 +172,20 @@ class User:
                 "password": user_row[5],
                 "phonenumber": user_row[6],
                 "username": user_row[7],
-                "registered_on": user_row[8],
-                "is_admin": isAdmin[9]}
+                "registered_on": user_row[8] 
+              }
 
     def delete_user(self, user_id):
         # Deletes a user from the database
         sql = """DELETE FROM users WHERE user_id='{}';"""
         db.execute(sql.format(user_id))
+
+
+    def check_password_match(self, password):
+        # checks if supplied password matches stored password
+        sql = """SELECT * FROM users WHERE password = '{}';"""
+        db.execute(sql.format(password))
+        fetched_password = db.fetchall()
+        if fetched_password:
+            return True
+        return False

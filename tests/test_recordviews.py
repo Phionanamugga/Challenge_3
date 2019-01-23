@@ -1,6 +1,7 @@
 import unittest
 import json
 from api import app
+from database import DatabaseConnection
 
 
 class Test_record_views(unittest.TestCase):
@@ -9,16 +10,16 @@ class Test_record_views(unittest.TestCase):
 
     def test_fetch_all_records(self):
         # Tests that the end point fetches all records
-        response = self.client.get('/api/v1/records',
+        response = self.client.get('/api/v2/interventions',
                                    content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
     def test_fetch_single_record(self):
         # Tests that the end point returns a single record
-        record_details = {
+        records = {
                     "title": "Corruption at its tipsefdthryt",
                     "description": "corruption in court in broad day light",
-                    "status": "accepted",
+                    "status": "Resolved",
                     "location": "nansana",
                     "record_type": "redflag",
                     "images": "fffff,fghjkj",
@@ -26,9 +27,9 @@ class Test_record_views(unittest.TestCase):
                     "created_by": "mutebiedfvfdhrtjuk",
                     "comments": "cuilrf,mrfre"
             }
-        self.client.post('api/v1/records',
-                         json=record_details)
-        response = self.client.get('/api/v1/records/1',
+        self.client.post('api/v2/interventions',
+                         json=records)
+        response = self.client.get('/api/v2/interventions/1',
                                    content_type='application/json')
         msg = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
@@ -49,9 +50,11 @@ class Test_record_views(unittest.TestCase):
             "title": "cuilrf,mrfre",
             "videos": "ffcccdsffcvvbfff"
             }
-        response = self.client.post('api/v1/records',
-                                    content_type='application/json',
-                                    json=record_details)
+        response = self.client.post(
+            'api/v2/interventions',
+            content_type='application/json', 
+            json=record_details
+        )
         new_details = {
                     "title": "Corruption at its tipsefdthryt",
                     "description": "corruption in court in broad day light",
@@ -61,10 +64,10 @@ class Test_record_views(unittest.TestCase):
                     "images": "fffff,fghjkj",
                     "videos": "ffcccdsffcvvbfff",
                     "created_by": "mutebiedfvfdhrtjuk",
-                    "comments": "cuilrf,mrfre"
-        }
-        response = self.client.put('api/v1/records/1',
-                                   json=new_details)
+                    "comments": "cuilrf,mrfre",
+                    }
+        response = self.client.put('api/v2/interventions/1',json=new_details)
+        print(response)
         msg = json.loads(response.data)
         self.assertIn("successfully edited", msg['message'])
         self.assertEqual(response.status_code, 200)
@@ -85,12 +88,12 @@ class Test_record_views(unittest.TestCase):
             "title": "cuilrf,mrfre",
             "videos": "ffcccdsffcvvbfff"
             }
-        response = self.client.post('api/v1/records',
+        response = self.client.post('api/v2/interventions',
                                     content_type='application/json',
                                     json=record_details)
         new_details = {
         }
-        response = self.client.delete('api/v1/records/1',
+        response = self.client.delete('api/v2/interventions/1',
                                       json=new_details)
         msg = json.loads(response.data)
         self.assertIn("successfully deleted", msg['message'])
