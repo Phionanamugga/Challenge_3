@@ -100,31 +100,43 @@ class Incident:
 
 class User:
     # this class defines the details of a user
-    def __init__(self):
-        self.user_id = 0
-        self.firstname = ""
-        self.lastname = ""
-        self. othernames = ""
-        self. email = ""
-        self.password = ""
-        self.phonenumber = ""
-        self.username = ""
-        self. registered_on = ""
+    def __init__(
+        self,
+        user_id=None, 
+        first_name=None, 
+        last_name=None,
+        othernames=None,
+        email=None,
+        password=None, 
+        phonenumber=None,
+        username=None,
+        registered_on=None
+    ):
+        self.user_id = user_id
+        self.first_name = first_name
+        self.last_name = last_name
+        self.othernames = othernames
+        self.email = email
+        self.password = password
+        self.phonenumber = phonenumber
+        self.username = username
+        self.registered_on = registered_on
         dbconn = DatabaseConnection()
         dbconn.create_user_table()
 
-    def insert_user(self, data):
+    def insert_user(self):
         registered_on = datetime.utcnow()
         """SQL query to add a new user to the database"""
-        query = """
-        INSERT INTO users(firstname, lastname, othernames, email,
-                          password, phonenumber, username, registered_on)\
-        VALUES('{}', '{}', '{}', '{}', '{}','{}','{}','{}');
-        """.format(data['firstname'], data['lastname'], 
-           data['othernames'], data['email'], data['password'],
-           data['phonenumber'], data['username'], registered_on)
+        query = f"""
+            INSERT INTO users(firstname, lastname, othernames, email,
+                            password, phonenumber, username, registered_on)\
+            VALUES('{self.first_name}', '{self.last_name}', '{self.othernames}', 
+                '{self.email}', '{self.password}','{self.phonenumber}',
+                '{self.username}',
+                '{self.registered_on}');
+        """
+        db.execute(query)
 
-        db.execute.format(query)
     
     def check_if_user_exists(self, email):
         sql = """  SELECT * FROM users WHERE email = '{}';"""
