@@ -110,7 +110,8 @@ class User:
         password=None, 
         phonenumber=None,
         username=None,
-        registered_on=None
+        registered_on=None,
+        is_admin=None
     ):
         self.user_id = user_id
         self.first_name = first_name
@@ -182,8 +183,9 @@ class User:
                 "password": user_row[5],
                 "phonenumber": user_row[6],
                 "username": user_row[7],
-                "registered_on": user_row[8] 
-                "is_admin": user_row[9]}
+                "registered_on": user_row[8],
+                "is_admin": user_row[9]
+                }
 
     def delete_user(self, user_id):
         # Deletes a user from the database
