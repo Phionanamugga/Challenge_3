@@ -133,11 +133,10 @@ class User:
             VALUES('{self.first_name}', '{self.last_name}', '{self.othernames}', 
                 '{self.email}', '{self.password}','{self.phonenumber}',
                 '{self.username}',
-                '{self.registered_on}');
+                '{self.registered_on}', {self.isAdmin});
         """
         db.execute(query)
 
-    
     def check_if_user_exists(self, email):
         sql = """  SELECT * FROM users WHERE email = '{}';"""
         db.execute(sql.format(email))
@@ -183,7 +182,7 @@ class User:
                 "phonenumber": user_row[6],
                 "username": user_row[7],
                 "registered_on": user_row[8] 
-              }
+                "isAdmin": user_row[9]}
 
     def delete_user(self, user_id):
         # Deletes a user from the database

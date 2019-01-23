@@ -34,24 +34,23 @@ def check_fields_required(data={}):
             return jsonify({'message': 'Password must be atleast 8 characters','status':'400'}), 400  
     return jsonify({"message": " account has been successfully created",'status': '201'}), 201
   
-    
-# alpha nemeric
-# numeric only
-
-
-# def check_valid_email(email=''):
-#     pass
-
-
-# def validate_password_strengh(passwpord='']):
-#     pass
-#     errors['password'] = 'The password supplied does not meet minimum requirement'
-
-# validation of password 
 
 def check_userlogin_requirements(email, password):
+    # tests that the required login details are filled in before the user logs in 
+    if not request.get_json:
+        return jsonify({"msg": "JSON is missing in request"}, 'status', '400'), 400
     for field in login_fields:
         if field not in data.keys():
             return jsonify({"message": "Enter email and password"}), 400
-    return jsonify({"message": " account has been successfully created",'status': '201'}), 201
- 
+    for user in users:
+        if user.email == email and user.password == password:
+            return jsonify({'message': "logged",'status': '201'}), 201
+    return jsonify({'message': 'user not found in list'}), 404
+
+
+def check_fetch_single_incident():
+    # tests that a singlu user is fetched
+    if fetched_incident:
+        return jsonify({"incident": fetched_incident, "status": "200"}), 200
+    return jsonify({"message": "incident doesnot exist", "status": "404"}), 404
+

@@ -17,7 +17,8 @@ class Test_user_views(unittest.TestCase):
                         "password": "email@gmail.com",
                         "email": "123-456-7890",
                         "phonenumber": "username",
-                        "username": "12345678"          
+                        "username": "12345678", 
+                        "isAdmin": "false"         
                         }
         response = self.client.post('/api/v2/auth/signup',
                                     content_type='application/json', 
