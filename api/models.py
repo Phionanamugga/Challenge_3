@@ -121,6 +121,7 @@ class User:
         self.phonenumber = phonenumber
         self.username = username
         self.registered_on = registered_on
+        self.is_admin = is_admin
         dbconn = DatabaseConnection()
         dbconn.create_user_table()
 
@@ -133,7 +134,7 @@ class User:
             VALUES('{self.first_name}', '{self.last_name}', '{self.othernames}', 
                 '{self.email}', '{self.password}','{self.phonenumber}',
                 '{self.username}',
-                '{self.registered_on}', {self.isAdmin});
+                '{self.registered_on}', {self.is_admin});
         """
         db.execute(query)
 
@@ -182,7 +183,7 @@ class User:
                 "phonenumber": user_row[6],
                 "username": user_row[7],
                 "registered_on": user_row[8] 
-                "isAdmin": user_row[9]}
+                "is_admin": user_row[9]}
 
     def delete_user(self, user_id):
         # Deletes a user from the database

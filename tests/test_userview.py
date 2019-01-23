@@ -18,7 +18,7 @@ class Test_user_views(unittest.TestCase):
                         "email": "123-456-7890",
                         "phonenumber": "username",
                         "username": "12345678", 
-                        "isAdmin": "false"         
+                        "is_admin" : "false"         
                         }
         response = self.client.post('/api/v2/auth/signup',
                                     content_type='application/json', 
