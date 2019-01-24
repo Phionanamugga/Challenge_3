@@ -10,6 +10,10 @@ class DatabaseConnection:
                                          password="123",
                                          host="localhost", port="5432",
                                          user="postgres")
+
+        elif os.environ.get('APP_SETTINGS') == 'production':
+            self.conn = psycopg2.connect(os.environ.get('DATABASE_URI'))
+        
         else:
             self.conn = psycopg2.connect(dbname="ireporter_db", password="123",
                                          host="localhost", port="5432",
