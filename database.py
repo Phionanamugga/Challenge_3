@@ -1,6 +1,6 @@
 import psycopg2
+from psycopg2.extras import RealDictCursor
 import os
-
 
 class DatabaseConnection:
     def __init__(self):
@@ -32,7 +32,7 @@ class DatabaseConnection:
                   othernames VARCHAR(25) NOT NULL, email VARCHAR(25) NOT NULL UNIQUE,
                   password VARCHAR(25) NOT NULL, phonenumber VARCHAR(25) NOT NULL,
                   username VARCHAR(10) NOT NULL,
-                  registered_on DATE NOT NULL, isAdmin BOOLEAN  NOT NULL );"""
+                  registered_on DATE NOT NULL, is_admin VARCHAR  NOT NULL);"""
         self.cur.execute(sql)
    
     def edit_incident(self,  attribute, value, records):

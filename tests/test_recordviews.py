@@ -91,86 +91,103 @@ class Test_record_views(unittest.TestCase):
                                    )
         self.assertEqual(response.status_code, 200)
        
-
-    def test_edit_incident(self):
-        # Tests that the end point enables user edit the location to their
-        #  created incident before status is changed by admin
-        response = self.client.post('/api/v2/auth/login',
-                                    content_type='application/json',
-                                    data=json.dumps(self.login_details))
-        msg = json.loads(response.data)
-        token = msg['token']
-        headers = {
-            "content_type": "application/json",
-            "Authorization": "Bearer " + token
-        }
+    # def test_edit_incident(self):
+    #     # Tests that the end point enables user edit the location to their
+    #     #  created incident before status is changed by admin
+    #     response = self.client.post('/api/v2/auth/login',
+    #                                 content_type='application/json',
+    #                                 data=json.dumps(self.login_details))
+    #     msg = json.loads(response.data)
+    #     token = msg['token']
+    #     headers = {
+    #         "content_type": "application/json",
+    #         "Authorization": "Bearer " + token
+    #     }
         
-        new_location = {"location": "mukono"}
-        response = self.client.patch('/api/v2/interventions/1/location',
-                                     data=json.dumps(new_location), 
-                                     headers=headers)
-        msg = json.loads(response.data)
-        self.assertIn("Updated the  intervention record's location", msg['data'])
-        self.assertEqual(response.status_code, 200)
+    #     response = self.client.patch('/api/v2/interventions/1', data=json.dumps(self.location), 
+    #                                  headers=headers)
+    #     location = {'location':'kampala'}
+    #     msg = json.loads(response.data)
+    #     response = self.client.patch('/api/v2/interventions/<int:incident_id>/location', data=json.dumps(self.new_location), 
+    #                                  headers=headers)
+    #     new_location = {"Location": "mukono"} 
+    #     self.assertIn("Updated the  intervention record's location", msg['data'])
+    #     self.assertEqual(response.status_code, 200)
+
+
+    # # # def test_edit_incident(self):
+    # # #     # Tests that the end point enables user edit   comment to their
+    # # #     #  created incident before status is changed by admin
+    # # #     new_comment = {"comment": "I have added videos" }
+    # # #     response = self.client.patch('/api/v2/red-flag/<int:incident_id>/comment', json = new_comment)
+    # # #     print(response)
+    # # #     msg = json.loads(response.data)
+    # # #     self.assertIn("Updated the  intervention record's comment", msg['data'])
+    # # #     self.assertEqual(response.status_code, 200)
+
+
+    # # # def test_edit_incident(self):
+    # # #     # Tests that the end point enables user edit   comment to their
+    # # #     #  created incident before status is changed by admin
+    # # #     new_location = {"comment": "Emergency intervention required" }
+    # # #     response = self.client.patch('/api/v2/red_flag/<int:incident_id>/comment', json = new_comment)
+    # # #     print(response)
+    # # #     msg = json.loads(response.data)
+    # # #     self.assertIn("Updated the  red-flag record's location", msg['data'])
+    # # #     self.assertEqual(response.status_code, 200)
 
 
     # # def test_edit_incident(self):
     # #     # Tests that the end point enables user edit   comment to their
     # #     #  created incident before status is changed by admin
-    # #     new_comment = {"comment": "I have added videos" }
-    # #     response = self.client.patch('/api/v2/red-flag/<int:incident_id>/comment', json = new_comment)
-    # #     print(response)
-    # #     msg = json.loads(response.data)
-    # #     self.assertIn("Updated the  intervention record's comment", msg['data'])
-    # #     self.assertEqual(response.status_code, 200)
-
-
-    # # def test_edit_incident(self):
-    # #     # Tests that the end point enables user edit   comment to their
-    # #     #  created incident before status is changed by admin
-    # #     new_location = {"comment": "Emergency intervention required" }
-    # #     response = self.client.patch('/api/v2/red_flag/<int:incident_id>/comment', json = new_comment)
+    # #     new_comment = {"comment": "Emergency intervention required" }
+    # #     response = self.client.patch('/api/v2/redflag/<int:incident_id>/comment', json = new_comment)
     # #     print(response)
     # #     msg = json.loads(response.data)
     # #     self.assertIn("Updated the  red-flag record's location", msg['data'])
     # #     self.assertEqual(response.status_code, 200)
 
+    def test_delete_incident(self):
+        # Tests that the end point enables user can delete his or her already created 
+        # incident when rejected by admin
+        login_details = {
+               "username": "user",
+               "password": "23221qxxsd"
+            }
+        response = self.client.post('/api/v2/auth/login',
+                                    content_type='application/json',
+                                    data=json.dumps(login_details))
+        print(response.data)        
+        msg = json.loads(response.data)
+        token = msg['token']
+        headers = {
+            "content_type": "application/json",
+            "Authorization": "Bearer " + token
+            }
 
-    # def test_edit_incident(self):
-    #     # Tests that the end point enables user edit   comment to their
-    #     #  created incident before status is changed by admin
-    #     new_comment = {"comment": "Emergency intervention required" }
-    #     response = self.client.patch('/api/v2/redflag/<int:incident_id>/comment', json = new_comment)
-    #     print(response)
-    #     msg = json.loads(response.data)
-    #     self.assertIn("Updated the  red-flag record's location", msg['data'])
-    #     self.assertEqual(response.status_code, 200)
-
-
-    # def test_delete_incident(self):
-    #     # Tests that the end point enables user edit their already created 
-    #     # incident when rejected by admin
-    #     incident_details = {
-    #         "comments": "mutebiedfvfdhrtjuk",
-    #         "created_by": "corruption in court in broad day light",
-    #         "created_on": "Corruption at its tips  in kanjo",
-    #         "description": "fffff,fghjkj",
-    #         "images": "love",
-    #         "location": "kakts",
-    #         "record_id": 1,
-    #         "record_type": "accepted",
-    #         "status": "intervention",
-    #         "title": "cuilrf,mrfre",
-    #         "videos": "ffcccdsffcvvbfff"
-    #         }
-    #     self.client.post('api/v2/interventions',
-    #                      content_type='application/json',
-    #                      json=incident_details)
-    #     response = self.client.delete('api/v2/interventions/1',
-    #                                   content_type='application/json')
-    #     msg = json.loads(response.data)
-    #     self.assertIn(" incident successfully deleted", msg['message'])
-    #     self.assertEqual(response.status_code, 200)
+        incident_details = {
+            "comments": "mutebiedfvfdhrtjuk",
+            "created_by": "corruption in court in broad day light",
+            "created_on": "Corruption at its tips  in kanjo",
+            "description": "fffff,fghjkj",
+            "images": "lol.png",
+            "location": "kakts",
+            "record_id": 1,
+            "record_type": "accepted",
+            "status": "intervention",
+            "title": "cuilrf,mrfre",
+            "videos": "ffcccdsffcvvbfff"
+            }
+        self.client.post('/api/v2/interventions',
+                         headers=headers,
+                         json=incident_details)
+        print(response.data)  
+        response = self.client.delete('/api/v2/interventions/1',
+                                      headers=headers,
+                                      json=incident_details)
+        message = json.loads(response.data)
+        self.assertIn("product successfully deleted", message['message'])
+        self.assertEqual(response.status_code, 200)
 
     def tearDown(self):
         db = DatabaseConnection()

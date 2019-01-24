@@ -34,7 +34,7 @@ def check_fields_required(data={}):
 
         if len(data['password']) < 8:
             return jsonify({'message': 'Password must be atleast 8 characters','status':'400'}), 400  
-    return jsonify({"message": " account has been successfully created",'status': '201'}), 201
+
 
 
 def validate_logged_in_user(self, data):

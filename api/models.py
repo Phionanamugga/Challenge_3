@@ -26,9 +26,7 @@ class Incident:
         # SQL query to add a record to the database
         query = """
         INSERT INTO incidents(createdon, created_by, incident_type, title,
-        description, location, status, images, videos,comments)\
-        self
-
+        description, location, status, images, videos,comments) 
         VALUES('{}', '{}', '{}', '{}', '{}','{}','{}','{}','{}','{}') RETURNING *; 
         """.format(createdon, data['created_by'], data['incident_type'],
                    data['title'], data['description'], data['location'],
@@ -40,7 +38,7 @@ class Incident:
     def get_incident(self):
         # Fetches all records from the database
         incidents = []
-        sql = """SELECT * FROM records"""
+        sql = """SELECT * FROM incidents"""
         db.execute(sql)
         rows = db.fetchall()
         for row in rows:
@@ -62,14 +60,14 @@ class Incident:
 
     def delete_incident(self, incident_id):
         # This function deletes an incident from the database
-        query = """DELETE * FROM incidents WHERE incident_id = '{}';"""
-        db.execute.format(query)
+        query = """DELETE FROM incidents WHERE incident_id = '{}';"""
+        db.execute(query.format(incident_id))
 
     def fetch_single_incident(self, incident_id):
         # Fetches a single an incident from the database
         single_incident = []
         sql = """ SELECT * FROM incidents WHERE incident_id = {}"""
-        db.execute.format(sql)
+        db.execute(sql.format(incident_id))
         row = db.fetchone()
         if row:
             single_incident.append({
@@ -87,66 +85,49 @@ class Incident:
             })
             return single_incident
             
-    def update_incident(self, incident_type, title,
-                        description, location, status, 
-                        images, videos, comments, incident_id):
+    def update_incident(self, location, incident_id):
         # Modifies a record
-        sql = f"""UPDATE incidents SET incident_type='{incident_type}',\
-                 title='{title}', description ='{description}', location='{location}',\
-                 status='{status}', images='{images}', videos='{videos}',
-                 comments='{comments}' WHERE incident_id='{incident_id}';"""
+        sql = f"""UPDATE incidents SET location='{location}' WHERE incident_id='{incident_id}';"""
         db.execute(sql)
 
 
 class User:
     # this class defines the details of a user
-    def __init__(
-        self,
-        user_id=None, 
-        first_name=None, 
-        last_name=None,
-        othernames=None,
-        email=None,
-        password=None, 
-        phonenumber=None,
-        username=None,
-        registered_on=None,
-        is_admin=None
-    ):
-        self.user_id = user_id
-        self.first_name = first_name
-        self.last_name = last_name
-        self.othernames = othernames
-        self.email = email
-        self.password = password
-        self.phonenumber = phonenumber
-        self.username = username
-        self.registered_on = registered_on
-        self.is_admin = is_admin
+    def __init__(self):
+        self.user_id = 0
+        self.first_name = ""
+        self.last_name = ""
+        self.othernames = ""
+        self.email = ""
+        self.password = ""
+        self.phonenumber = ""
+        self.username = ""
+        self.registered_on = ""
+        self.is_admin = ""
         dbconn = DatabaseConnection()
         dbconn.create_user_table()
 
-    def insert_user(self):
+    def insert_user(self, data):
         registered_on = datetime.utcnow()
         """SQL query to add a new user to the database"""
-        query = f"""
-            INSERT INTO users(firstname, lastname, othernames, email,
-                            password, phonenumber, username, registered_on)\
-            VALUES('{self.first_name}', '{self.last_name}', '{self.othernames}', 
-                '{self.email}', '{self.password}','{self.phonenumber}',
-                '{self.username}',
-                '{self.registered_on}', {self.is_admin});
-        """
-        db.execute(query)
+        query = """ INSERT INTO users(firstname, lastname, othernames, email,
+                            password, phonenumber, username, registered_on, 
+                            is_admin)\
+                     VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');"""
+        db.execute(query.format(data['firstname'], data['lastname'],
+                                data['othernames'], data['email'], 
+                                data['password'], data['phonenumber'],
+                                data['username'], registered_on, 
+                                data['is_admin']))
 
-    def check_if_user_exists(self, email):
-        sql = """  SELECT * FROM users WHERE email = '{}';"""
-        db.execute(sql.format(email))
+    def check_if_user_exists(self, email, password):
+        sql = """ SELECT * FROM users WHERE email = '{}' and password='{}';"""
+        db.execute(sql.format(email, password))
         row = db.fetchone()
         if row:
             return True
         return False
-    
+
     def fetch_users(self):
         # Fetches all users from the database
         user_rows = []
@@ -195,7 +176,7 @@ class User:
     def check_password_match(self, password):
         # checks if supplied password matches stored password
         sql = """SELECT * FROM users WHERE password = '{}';"""
-        db.execute.format(sql)
+        db.execute(sql.format(password))
         fetched_password = db.fetchall()
         if fetched_password:
             return True
