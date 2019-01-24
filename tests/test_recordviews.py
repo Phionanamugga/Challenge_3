@@ -36,24 +36,6 @@ class Test_record_views(unittest.TestCase):
                               "password": "12345678"}
 
     def test_create_incident(self):
-        # Tests that the incident is 
-        # self.client.post('/api/v2/auth/signup',
-        #                  content_type='application/json', 
-        #                  data=json.dumps(self.user_details)) 
-        # response = self.client.post('/api/v2/auth/login',
-        #                             content_type='application/json',
-        #                             data=json.dumps(self.incidents))
-        # msg = json.loads(response.data)
-        # token = msg['token']
-        # headers = {
-        #     "content_type": "application/json",
-        #     "Authorization": "Bearer " + token
-        # }
-        # print(response.data)
-        # response = self.client.get('/api/v2/interventions',
-        #                            headers=headers)
-        # self.assertEqual(response.status_code, 200)
-
         self.client.post('/api/v2/auth/signup',
                          content_type='application/json', 
                          data=json.dumps(self.user_details))
@@ -122,9 +104,10 @@ class Test_record_views(unittest.TestCase):
             "content_type": "application/json",
             "Authorization": "Bearer " + token
         }
+        
         new_location = {"location": "mukono"}
-        response = self.client.patch('/api/v2/interventions/<int:incident_id>/location',
-                                     data=json.dumps(self.new_location), 
+        response = self.client.patch('/api/v2/interventions/1/location',
+                                     data=json.dumps(new_location), 
                                      headers=headers)
         msg = json.loads(response.data)
         self.assertIn("Updated the  intervention record's location", msg['data'])
