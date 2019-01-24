@@ -9,11 +9,11 @@ class DatabaseConnection:
             self.conn = psycopg2.connect(dbname="ireporter_testdb",
                                          password="123",
                                          host="localhost", port="5432",
-                                         user="phiona")
+                                         user="postgres")
         else:
             self.conn = psycopg2.connect(dbname="ireporter_db", password="123",
                                          host="localhost", port="5432",
-                                         user="phiona")
+                                         user="postgres")
 
         self.cur = self.conn.cursor()
         self.conn.autocommit = True
