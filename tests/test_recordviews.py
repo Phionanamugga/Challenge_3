@@ -11,17 +11,17 @@ class Test_record_views(unittest.TestCase):
         db = DatabaseConnection()
         db.create_incident_table()
         self.incidents = {
-                    "title": "Corruption at its tipsefdthryt",
-                    "description": "corruption in court in broad day light",
-                    "status": "Resolved",
-                    "location": "nansana",
-                    "record_type": "redflag",
-                    "images": "fffff,fghjkj",
-                    "videos": "ffcccdsffcvvbfff",
-                    "created_by": "mutebiedfvfdhrtjuk",
-                    "comments": "cuilrf,mrfre"
+                "incident_type": "Articlkhje",
+                "title": "Incident at Kamwokya",
+                "description": "Today is the day",
+                "location": "Kamwokya",
+                "status": "unresolved",
+                "images": "image",
+                "videos": "video",
+                "comments": "hello",
+                "created_by": "phiona"
             }
-              
+         
         self.user_details = {
                         "firstname": "emily",
                         "lastname": "mirembe",
@@ -90,105 +90,155 @@ class Test_record_views(unittest.TestCase):
                                    headers=headers
                                    )
         self.assertEqual(response.status_code, 200)
-       
-    # def test_edit_incident(self):
-    #     # Tests that the end point enables user edit the location to their
-    #     #  created incident before status is changed by admin
-    #     response = self.client.post('/api/v2/auth/login',
-    #                                 content_type='application/json',
-    #                                 data=json.dumps(self.login_details))
-    #     msg = json.loads(response.data)
-    #     token = msg['token']
-    #     headers = {
-    #         "content_type": "application/json",
-    #         "Authorization": "Bearer " + token
-    #     }
-        
-    #     response = self.client.patch('/api/v2/interventions/1', data=json.dumps(self.location), 
-    #                                  headers=headers)
-    #     location = {'location':'kampala'}
-    #     msg = json.loads(response.data)
-    #     response = self.client.patch('/api/v2/interventions/<int:incident_id>/location', data=json.dumps(self.new_location), 
-    #                                  headers=headers)
-    #     new_location = {"Location": "mukono"} 
-    #     self.assertIn("Updated the  intervention record's location", msg['data'])
-    #     self.assertEqual(response.status_code, 200)
 
+    def test_edit_incident(self):
+        # Tests that the end point enables user edit   comment to their
+        #  created incident before status is changed by admin
+        self.client.post('/api/v2/auth/signup',
+                         content_type='application/json', 
+                         data=json.dumps(self.user_details))
 
-    # # # def test_edit_incident(self):
-    # # #     # Tests that the end point enables user edit   comment to their
-    # # #     #  created incident before status is changed by admin
-    # # #     new_comment = {"comment": "I have added videos" }
-    # # #     response = self.client.patch('/api/v2/red-flag/<int:incident_id>/comment', json = new_comment)
-    # # #     print(response)
-    # # #     msg = json.loads(response.data)
-    # # #     self.assertIn("Updated the  intervention record's comment", msg['data'])
-    # # #     self.assertEqual(response.status_code, 200)
+        resp = self.client.post('/api/v2/auth/login',
+                                content_type='application/json',
+                                data=json.dumps(self.login_details))
 
-
-    # # # def test_edit_incident(self):
-    # # #     # Tests that the end point enables user edit   comment to their
-    # # #     #  created incident before status is changed by admin
-    # # #     new_location = {"comment": "Emergency intervention required" }
-    # # #     response = self.client.patch('/api/v2/red_flag/<int:incident_id>/comment', json = new_comment)
-    # # #     print(response)
-    # # #     msg = json.loads(response.data)
-    # # #     self.assertIn("Updated the  red-flag record's location", msg['data'])
-    # # #     self.assertEqual(response.status_code, 200)
-
-
-    # # def test_edit_incident(self):
-    # #     # Tests that the end point enables user edit   comment to their
-    # #     #  created incident before status is changed by admin
-    # #     new_comment = {"comment": "Emergency intervention required" }
-    # #     response = self.client.patch('/api/v2/redflag/<int:incident_id>/comment', json = new_comment)
-    # #     print(response)
-    # #     msg = json.loads(response.data)
-    # #     self.assertIn("Updated the  red-flag record's location", msg['data'])
-    # #     self.assertEqual(response.status_code, 200)
-
-    def test_delete_incident(self):
-        # Tests that the end point enables user can delete his or her already created 
-        # incident when rejected by admin
-        login_details = {
-               "username": "user",
-               "password": "23221qxxsd"
-            }
-        response = self.client.post('/api/v2/auth/login',
-                                    content_type='application/json',
-                                    data=json.dumps(login_details))
-        print(response.data)        
-        msg = json.loads(response.data)
-        token = msg['token']
+        message = json.loads(resp.data)
+        token = message['token']
         headers = {
             "content_type": "application/json",
             "Authorization": "Bearer " + token
             }
+        self.client.post('/api/v2/interventions',
+                         headers=headers,
+                         json=self.incidents)
+        self.status = {
+            "status": "I have added videos"
+            }
 
-        incident_details = {
-            "comments": "mutebiedfvfdhrtjuk",
-            "created_by": "corruption in court in broad day light",
-            "created_on": "Corruption at its tips  in kanjo",
-            "description": "fffff,fghjkj",
-            "images": "lol.png",
-            "location": "kakts",
-            "record_id": 1,
-            "record_type": "accepted",
-            "status": "intervention",
-            "title": "cuilrf,mrfre",
-            "videos": "ffcccdsffcvvbfff"
+        response = self.client.patch('/api/v2/interventions/1/status',
+                                     headers=headers,
+                                     json=self.status)
+        msg = json.loads(response.data)
+        self.assertIn("Updated red-flag record's status", msg['data'])
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_incident_location(self):
+        # Tests that the end point enables user edit   comment to their
+        #  created incident before status is changed by admin
+        self.client.post('/api/v2/auth/signup',
+                         content_type='application/json', 
+                         data=json.dumps(self.user_details))
+
+        resp = self.client.post('/api/v2/auth/login',
+                                content_type='application/json',
+                                data=json.dumps(self.login_details))
+
+        message = json.loads(resp.data)
+        token = message['token']
+        headers = {
+            "content_type": "application/json",
+            "Authorization": "Bearer " + token
             }
         self.client.post('/api/v2/interventions',
                          headers=headers,
-                         json=incident_details)
-        print(response.data)  
+                         json=self.incidents)
+        new_location = {
+            "location": "Emergency intervention required"
+            }
+        response = self.client.patch('/api/v2/interventions/1/location',
+                                     headers=headers,
+                                     json=new_location)
+        msg = json.loads(response.data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_edit_incident_comment(self):
+        # Tests that the end point enables user edit   comment to their
+        #  created incident before status is changed by admin
+        self.client.post('/api/v2/auth/signup',
+                         content_type='application/json', 
+                         data=json.dumps(self.user_details))
+
+        resp = self.client.post('/api/v2/auth/login',
+                                content_type='application/json',
+                                data=json.dumps(self.login_details))
+
+        message = json.loads(resp.data)
+        token = message['token']
+        headers = {
+            "content_type": "application/json",
+            "Authorization": "Bearer " + token
+            }
+        self.client.post('/api/v2/interventions',
+                         headers=headers,
+                         json=self.incidents)
+        self.new_comment = {
+            "comment": "Emergency intervention required"
+             }
+               
+        response = self.client.patch('/api/v2/interventions/1/comment',
+                                     headers=headers,
+                                     json=self.new_comment)
+        print(response)
+        msg = json.loads(response.data)
+        self.assertIn("Updated intervention record's comment", msg['data'])
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_incident(self):
+        # Tests that the end point enables user can delete his or her already created 
+        # incident when rejected by admin
+        self.client.post('/api/v2/auth/signup',
+                         content_type='application/json', 
+                         data=json.dumps(self.user_details))
+
+        resp = self.client.post('/api/v2/auth/login',
+                                content_type='application/json',
+                                data=json.dumps(self.login_details))
+
+        message = json.loads(resp.data)
+        token = message['token']
+        headers = {
+            "content_type": "application/json",
+            "Authorization": "Bearer " + token
+            }
+        self.client.post('/api/v2/interventions',
+                         headers=headers,
+                         json=self.incidents)
+
         response = self.client.delete('/api/v2/interventions/1',
                                       headers=headers,
-                                      json=incident_details)
+                                      json=self.incidents)
         message = json.loads(response.data)
-        self.assertIn("product successfully deleted", message['message'])
+        self.assertIn("incident successfully deleted", message['message'])
         self.assertEqual(response.status_code, 200)
+
+    def test_delete_incident_for_wrong_incident_id(self):
+        # Tests that the end point enables user can delete his or her already created 
+        # incident when rejected by admin
+        self.client.post('/api/v2/auth/signup',
+                         content_type='application/json', 
+                         data=json.dumps(self.user_details))
+
+        resp = self.client.post('/api/v2/auth/login',
+                                content_type='application/json',
+                                data=json.dumps(self.login_details))
+
+        message = json.loads(resp.data)
+        token = message['token']
+        headers = {
+            "content_type": "application/json",
+            "Authorization": "Bearer " + token
+            }
+        self.client.post('/api/v2/interventions',
+                         headers=headers,
+                         json=self.incidents)
+
+        response = self.client.delete('/api/v2/interventions/0',
+                                      headers=headers,
+                                      json=self.incidents)
+        message = json.loads(response.data)
+        self.assertIn("This record doesnot exist", message['message'])
+        self.assertEqual(response.status_code, 400)
 
     def tearDown(self):
         db = DatabaseConnection()
-        db.drop_tables('incidents')
+        db.drop_tables('users')

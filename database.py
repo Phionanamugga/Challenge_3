@@ -42,8 +42,8 @@ class DatabaseConnection:
 
     def drop_tables(self, table_name):
         """ Drops the tables that exist in the database"""
-        sql = """ DROP TABLE {} CASCADE; """
-        self.cur.execute(sql.format(table_name))
+        sql = f"TRUNCATE {table_name};" 
+        self.cur.execute(sql)
 
     def close_DB(self):
         self.conn.close()
@@ -51,4 +51,5 @@ class DatabaseConnection:
 
 dbconn = DatabaseConnection()
 dbconn.create_incident_table()
+dbconn.create_user_table()
 dbconn.close_DB()

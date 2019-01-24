@@ -36,7 +36,6 @@ def check_fields_required(data={}):
             return jsonify({'message': 'Password must be atleast 8 characters','status':'400'}), 400  
 
 
-
 def validate_logged_in_user(self, data):
     if not request.get_json:
         return jsonify({"msg": "JSON is missing in request"}, 'status', '400'), 400

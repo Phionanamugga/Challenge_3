@@ -131,7 +131,7 @@ def register_user():
         return jsonify({"message": "User already exists"}), 400
     user.insert_user(data)
     return jsonify({"message": "account has been successfully created",
-                    "status": "200"}), 200
+                    "status": "201"}), 201
 
 
 @user.route('/api/v2/auth/login', methods=['POST'])
