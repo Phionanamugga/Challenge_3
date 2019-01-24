@@ -2,6 +2,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
 
+
 class DatabaseConnection:
     def __init__(self):
         if os.environ.get('APP_SETTINGS') == 'testing':
