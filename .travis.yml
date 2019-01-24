@@ -6,19 +6,19 @@ services:
   - postgresql
 env:
   global:
-    - DB_NAME=ireporter_db
+    - APP_SETTINGS='testing'
 
-cache: pip
-# installs requirenents
 install: 
-  - pip install -r requirements.txt
-  - pip install coveralls
+  - "pip install -r requirements.txt"
+  - "pip install coveralls"
 
-# command to run tests
-script: nosetests  --with-coverage --cover-package=api tests/
 
 before_script:
-  - psql -c 'create database ireporter_db;' -U postgres
+  - "psql -c 'create database ireporter_db;' -U postgres"
+  - "psql -c 'create database ireporter_testdb;' -U postgres"
+
+script:
+  - nosetests  --with-coverage --cover-package=api && coverage report
 
 after_success:
   - coveralls
