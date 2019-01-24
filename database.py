@@ -52,9 +52,3 @@ class DatabaseConnection:
 
     def close_DB(self):
         self.conn.close()
-
-
-dbconn = DatabaseConnection()
-dbconn.create_incident_table()
-dbconn.create_user_table()
-dbconn.close_DB()

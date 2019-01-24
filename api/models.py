@@ -20,6 +20,8 @@ class Incident:
         self.images = ""
         self.videos = ""
         self.comments = ""
+        dbconn = DatabaseConnection()
+        dbconn.create_incident_table()
 
     def add_incident(self, data):
         createdon = datetime.utcnow()
