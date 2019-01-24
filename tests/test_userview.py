@@ -1,11 +1,14 @@
 import unittest
 import json
 from api import app
+from database import DatabaseConnection
 
 
 class Test_user_views(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
+        db = DatabaseConnection()
+        db.create_user_table()
 
     def test_register_user(self):
         # Tests that the end point enables a new user create an account
@@ -13,17 +16,17 @@ class Test_user_views(unittest.TestCase):
         user_details = {
                         "firstname": "emily",
                         "lastname": "mirembe",
-                        "othername": "princess",
-                        "password": "email@gmail.com",
-                        "email": "123-456-7890",
-                        "phonenumber": "username",
-                        "username": "12345678", 
-                        "is_admin" : "false"         
+                        "othernames": "princess",
+                        "password": "12345678",
+                        "email": "email@gmail.com",
+                        "phonenumber": "0756723881",
+                        "username": "phiona", 
+                        "is_admin": "False"         
                         }
         response = self.client.post('/api/v2/auth/signup',
                                     content_type='application/json', 
                                     data=json.dumps(user_details))
-        print(response)
+        print(response.data)
         msg = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertIn("account has been successfully created", msg['message'])
@@ -42,7 +45,7 @@ class Test_user_views(unittest.TestCase):
                                     content_type='application/json',
                                     data=json.dumps(login_details))
         msg = json.loads(response.data)
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
 
     # def test_fetch_single_user_details(self):
     #     # Tests that the end point returns a single user's details
@@ -85,3 +88,7 @@ class Test_user_views(unittest.TestCase):
     #     msg = json.loads(response.data)
     #     self.assertIn("successfully deleted", msg['message'])
     #     self.assertEqual(response.status_code, 200)
+
+    def tear_down(self):
+        db = DatabaseConnection()
+        db.drop_tables('users')
