@@ -46,12 +46,12 @@ def create_incident():
     data = request.get_json()
     created_incident = new_incident.add_incident(data)
     return jsonify({"message": " Successfully created",
-                    "intervention": created_incident}), 200
+                    "intervention": created_incident}), 201
 
 
 @incident.route('/api/v2/interventions', methods=['GET'])
 @token_required
-def fetch_incident():
+def fetch_incidents():
     # fetches all user's incidents
     fetched_incidents = new_incident.get_incident()
     return jsonify({'incidents': fetched_incidents, 'status':'200'}), 200
@@ -62,7 +62,7 @@ def fetch_incident():
 def fetch_single_incident(incident_id):
     fetched_incident = []
     fetched_incident = new_incident.fetch_single_incident(incident_id)
-    return jsonify({"incident": fetched_incident})
+    return jsonify({"incident": fetched_incident}), 200
 
 @incident.route('/api/v2/interventions/<int:incident_id>', methods=['DELETE'])
 @token_required
@@ -81,8 +81,8 @@ def edit_redflag_status(incident_id):
     user = User()
     data = request.get_json()
     new_incident.update_incident(data['status'], incident_id)
-    return jsonify({"status": 200,
-                    "data": "successfully edited"}), 200
+    return jsonify({"status": 201,
+                    "data": "successfully edited"}), 201
 
 
 @incident.route('/api/v2/interventions/<int:incident_id>/location', methods=['PATCH'])
@@ -94,7 +94,7 @@ def edit_intervention_location(incident_id):
     print(data, incident_id)
     new_incident.update_incident(data['location'], incident_id)
     return jsonify({"status": 200,
-                    "data": "Updated intervention record's location"}), 200
+                    "data": "Updated intervention record's location"}), 201
 
 
 @incident.route('/api/v2/interventions/<int:incident_id>/comment', methods=['PATCH'])
@@ -105,7 +105,7 @@ def edit_intervention_comment(incident_id):
     # if admin = True:
     new_incident.update_incident(data['comment'], incident_id)
     return jsonify({"status": 200,
-                    "data": "Updated intervention record's comment"}), 200
+                    "data": "Updated intervention record's comment"}), 201
 
 
 @incident.route('/api/v2/interventions/<int:incident_id>/status', methods=['PATCH'])
@@ -116,7 +116,7 @@ def edit_intervention_status(incident_id):
     # if admin = True:
     new_incident.update_incident(data['status'], incident_id)
     return jsonify({"status": 200,
-                    "data": "Updated red-flag record's status"}), 200
+                    "data": "Updated red-flag record's status"}), 201
 
 
 @user.route('/api/v2/auth/signup', methods=['POST'])

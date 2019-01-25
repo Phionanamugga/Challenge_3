@@ -1,5 +1,6 @@
 from flask import jsonify, request, abort, Blueprint
 import re
+import api.views
 
 
 errors = {}
