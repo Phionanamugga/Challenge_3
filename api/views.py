@@ -46,12 +46,12 @@ def create_incident():
     data = request.get_json()
     created_incident = new_incident.add_incident(data)
     return jsonify({"message": " Successfully created",
-                    "intervention": created_incident}), 201
+                    "intervention": created_incident}), 200
 
 
 @incident.route('/api/v2/interventions', methods=['GET'])
 @token_required
-def fetch_incidents():
+def fetch_incident():
     # fetches all user's incidents
     fetched_incidents = new_incident.get_incident()
     return jsonify({'incidents': fetched_incidents, 'status':'200'}), 200
@@ -62,7 +62,7 @@ def fetch_incidents():
 def fetch_single_incident(incident_id):
     fetched_incident = []
     fetched_incident = new_incident.fetch_single_incident(incident_id)
-    return jsonify({"incident": fetched_incident}), 200
+    return jsonify({"incident": fetched_incident})
 
 @incident.route('/api/v2/interventions/<int:incident_id>', methods=['DELETE'])
 @token_required
@@ -81,8 +81,8 @@ def edit_redflag_status(incident_id):
     user = User()
     data = request.get_json()
     new_incident.update_incident(data['status'], incident_id)
-    return jsonify({"status": 201,
-                    "data": "successfully edited"}), 201
+    return jsonify({"status": 200,
+                    "data": "successfully edited"}), 200
 
 
 @incident.route('/api/v2/interventions/<int:incident_id>/location', methods=['PATCH'])
@@ -94,7 +94,7 @@ def edit_intervention_location(incident_id):
     print(data, incident_id)
     new_incident.update_incident(data['location'], incident_id)
     return jsonify({"status": 200,
-                    "data": "Updated intervention record's location"}), 201
+                    "data": "Updated intervention record's location"}), 200
 
 
 @incident.route('/api/v2/interventions/<int:incident_id>/comment', methods=['PATCH'])
@@ -105,7 +105,7 @@ def edit_intervention_comment(incident_id):
     # if admin = True:
     new_incident.update_incident(data['comment'], incident_id)
     return jsonify({"status": 200,
-                    "data": "Updated intervention record's comment"}), 201
+                    "data": "Updated intervention record's comment"}), 200
 
 
 @incident.route('/api/v2/interventions/<int:incident_id>/status', methods=['PATCH'])
@@ -116,7 +116,7 @@ def edit_intervention_status(incident_id):
     # if admin = True:
     new_incident.update_incident(data['status'], incident_id)
     return jsonify({"status": 200,
-                    "data": "Updated red-flag record's status"}), 201
+                    "data": "Updated red-flag record's status"}), 200
 
 
 @user.route('/api/v2/auth/signup', methods=['POST'])
@@ -124,7 +124,26 @@ def register_user():
     # registers a  new user
     user = User()
     data = request.get_json()
+    username = data['username']
+    text_fields = ['othernames', 'firstname', 'lastname', 'username', 'email']
+    user_fields = ['othernames', 'firstname', 'lastname']
+    key_fields = ['email', 'password']
     check_fields_required(data)
+    for name in user_fields:
+        if not re.match(name_regex, data[name]):
+            return jsonify({'message': 'Enter correct ' + name + ' format'}), 400
+    
+    for key in key_fields:
+        if not data[key] or data[key].isspace():
+            return jsonify({'message': key + ' field can not be empty.'}), 400
+    if not username or username.isspace():
+        return jsonify({'message': 'Username can not be empty.'}), 400 
+    if not re.match(r"[^@.]+@[A-Za-z]+\.[a-z]+", data['email']):
+        return jsonify({'message': 'Enter a valid email address.'}), 400
+    if not re.match(username_regex, data['username']):
+        return jsonify({'message': 'Enter a valid username'}), 400
+    if len(data['password']) < 8:
+        return jsonify({'message': 'Password must be atleast 8 characters'}), 400
     if len(errors) > 0:
         return jsonify(json.dumps(errors)), 400
     if user.check_if_user_exists(data['email'], data['password']):
@@ -150,7 +169,4 @@ def login():
                             timedelta(minutes=30)},
                            secret_key)
         return jsonify({'token': token.decode('UTF-8')}), 200
-    return jsonify({'message': 'Invalid email or password'}), 404
-
-
-
+    return jsonify({'message': 'Invalid email or password'}), 400

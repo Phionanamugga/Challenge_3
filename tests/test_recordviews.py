@@ -72,7 +72,7 @@ class Test_record_views(unittest.TestCase):
                                    )
         self.assertEqual(response.status_code, 200)
 
-    def test_fetch_single_incidents(self):
+    def test_fetch_single_incident(self):
         # Tests that the end point returns a single incident
         self.client.post('/api/v2/auth/signup',
                          content_type='application/json', 
@@ -181,7 +181,7 @@ class Test_record_views(unittest.TestCase):
         print(response)
         msg = json.loads(response.data)
         self.assertIn("Updated intervention record's comment", msg['data'])
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 200)
 
     def test_delete_incident(self):
         # Tests that the end point enables user can delete his or her already created 

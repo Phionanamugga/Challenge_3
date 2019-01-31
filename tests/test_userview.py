@@ -89,7 +89,7 @@ class Test_user_views(unittest.TestCase):
                                     json=wrong_credentials)
         msg = json.loads(response.data)
         self.assertIn("Invalid email or password",msg['message'])
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def tearDown(self):    
         db.drop_tables('users')
